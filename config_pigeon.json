@@ -1,0 +1,17 @@
+{
+    "icons": "",
+    "return-type": "json",
+    "ui": {
+        "fps_l": 4,
+        "fps_h": 96
+    },
+    "cpu": {
+        "interval": 1,
+        "states": {
+            "high": 80,
+            "medium": 45,
+            "low": 20
+        }
+    },
+    "tooltip-format": "NETWORK {percentage}%"
+}

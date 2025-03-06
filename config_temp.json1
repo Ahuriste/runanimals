@@ -1,0 +1,18 @@
+{
+    "icons":"",
+    "return-type": "json",
+    "ui": {
+        "fps_l": 6,
+        "fps_h": 90
+    },
+    "cpu": {
+        "interval": 1,
+        "states": {
+            "high": 65,
+            "medium": 50,
+            "low":40 
+        },
+        "stat-file": "/proc/stat"
+    },
+    "tooltip-format": "Temp {percentage}%"
+}

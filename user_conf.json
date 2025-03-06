@@ -1,0 +1,10 @@
+{
+    "animal":
+    {
+        "cpu":"dino",
+        "ram":"cat1",
+        "temp":"mouse",
+        "eiffel":"eiffel",
+        "pigeon":"pigeon"
+    }
+}
