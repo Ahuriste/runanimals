@@ -1,0 +1,206 @@
+
+window#waybar {
+    font-family:'FontAwesome';
+    background-color: rgba(155, 155, 155, 0.4);
+    /*background: #1a1a1a;*/
+    color: #fdf6e3;
+    font-size: 30px;
+}
+
+
+
+
+#clock.1,
+#clock.2,
+#clock.3,
+#pulseaudio,
+#memory,
+#cpu,
+#battery,
+#disk,
+#tray,
+#window,
+#network,
+#temperature,
+#clock {
+    font-size : 15px;
+    padding: 0 10px;
+}
+
+#workspaces{
+    font-size: 20px;
+    padding: 0 10px;
+}
+
+#pulseaudio {
+    color: #b69ec1;
+}
+
+#network {
+    color: #b0e0e6;
+}
+
+#cpu {
+    color: #d8aeae;
+}
+#mode {
+    font-size: 12px;
+    color: #ff9e8e;
+}
+
+#memory {
+    color: #eae7b6;
+    font-family: 'FontAwesome';
+}
+
+#temperature {
+    color: #bce7c5;
+}
+
+#battery{
+    color: #6aa84f;
+}
+
+#battery.warning {
+    color: #ff9b9b;
+}
+
+#battery.critical {
+    color: #ff0000;
+}
+
+
+
+#workspaces button {
+    padding: 0 2px;
+    color: #fdf6e3;
+}
+#workspaces button.focused {
+    color: #6aa84f;
+}
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+#workspaces button:hover {
+    background: #1a1a1a;
+    border: #1a1a1a;
+    padding: 0 3px;
+}
+#custom-runcat {
+    font-family: 'runners';
+    font-size: 30px;
+
+}
+
+#custom-runcat.low {
+    font-family: 'runners';
+    color: #FFAAAA;
+    /*color: red;#d8b1d4; */
+}
+
+#custom-runcat.medium {
+    font-family: 'runners';
+    color: #FF6666;
+    /*#color: red #72A0C1;*/
+}
+
+#custom-runcat.high {
+    font-family: 'runners';
+    color: red;
+}
+#custom-runcatzoo {
+    font-family: 'runners';
+    font-size: 28;
+    /*transform: scale(-1, 1);*/
+}
+
+#custom-runcatzoo.low {
+    font-family: 'runners';
+}
+
+#custom-runcatzoo.medium {
+    font-family: 'runners';
+}
+
+#custom-runcatzoo.high {
+    font-family: 'runners';
+}
+#custom-runcatram {
+    font-family: 'runners';
+    font-size: 30px;
+
+    color: #e4b1d4 ;
+}
+
+#custom-runcatram.low {
+    font-family: 'runners';
+    color: #e8b1d4 ;
+}
+
+#custom-runcatram.medium {
+    font-family: 'runners';
+    color: #efb1d4 ;
+}
+
+#custom-runcatram.high {
+    font-family: 'runners';
+    color: red;
+}
+#custom-runcattemp {
+    font-family: 'runners';
+    font-size: 30px;
+
+}
+
+#custom-runcattemp.low {
+    font-family: 'runners';
+    color: #CFAEAE;
+}
+
+#custom-runcattemp.medium {
+    font-family: 'runners';
+    color: #DFAEAE;
+}
+
+#custom-runcattemp.high {
+    font-family: 'runners';
+    color: red;
+}
+#custom-runcateiffel {
+    font-size : 40px;
+    font-family: 'eiffelz';
+    color:red;
+}
+#custom-runcateiffel.low {
+    font-family: 'eiffelz';
+    color: #fff580;
+}
+#custom-runcateiffel.medium {
+    font-family: 'eiffelz';
+    color: #fdf580;
+}
+#custom-runcateiffel.high {
+    font-family: 'eiffelz';
+    color: #faf580;
+}
+#custom-runcateiffel.charging {
+    color: #6aa84f;
+}
+#custom-runcatpigeon {
+    font-size : 31px;
+    margin-bottom:0px;
+    padding-bottom:0px;
+    font-family: 'pigeon2z';
+    color: #AFaFcF;
+}
+#custom-runcatpigeon.low {
+    font-family: 'pigeon2z';
+}
+#custom-runcatpigeon.medium {
+    font-family: 'pigeon2z';
+}
+#custom-runcatpigeon.high {
+    font-family: 'pigeon2z';
+}
+
