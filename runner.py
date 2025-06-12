@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import random
-from math import ceil
-import os
+from math import ceil, lcm
 import asyncio
 from runners import runners
-import subprocess
+
 try:
     import pyjson5 as json
 except ImportError:
@@ -18,7 +17,6 @@ T = TypeVar("T")
 
 
 class Spinner(Generic[T]):
-
     def __init__(self, data: Sequence[T]) -> None:
         if len(data) == 0:
             raise ValueError("data has to contain at least one element")
@@ -35,7 +33,6 @@ class Spinner(Generic[T]):
 
 
 class Output:
-
     def __init__(self, return_type: Literal["json"] | None = None) -> None:
         self.text: str = ""
         self.alt: str = ""
@@ -48,23 +45,18 @@ class Output:
 
     def __str__(self) -> str:
         if self.__return_type == "json":
-            return json.dumps({
-                "text":
-                self.text,
-                "alt":
-                self.alt,
-                "tooltip":
-                self.tooltip_format.format(**{
+            return json.dumps(
+                {
+                    "text": self.text,
+                    "alt": self.alt,
+                    "tooltip": self.tooltip_format.format(
+                        **{"label": self.label, "percentage": self.percentage}
+                    ),
+                    "class": self.cls,
+                    "percentage": self.percentage,
                     "label": self.label,
-                    "percentage": self.percentage
-                }),
-                "class":
-                self.cls,
-                "percentage":
-                self.percentage,
-                "label":
-                self.label
-            })
+                }
+            )
 
         return f"{self.text}"
 
@@ -73,9 +65,13 @@ class Output:
 
 
 class CPU:
-
-    def __init__(self, interval: float, file: str | pathlib.Path,
-                 states: Dict[str, int], animal=None) -> None:
+    def __init__(
+        self,
+        interval: float,
+        file: str | pathlib.Path,
+        states: Dict[str, int],
+        animal=None,
+    ) -> None:
         self.__update_interval = interval
         self.__file = pathlib.Path(file)
         self.__states = states
@@ -93,14 +89,15 @@ class CPU:
                 percent = int(100 * random.random())
             else:
                 percent = int(
-                    min(100, max(10,
-                                 self.last + (1 - 2 * random.random() )*4)))
+                    min(100, max(10, self.last + (1 - 2 * random.random()) * 4))
+                )
             self.percent = percent
             self.last = percent
             out.percentage = self.percent
             self.state = ""
-            for key, value in sorted(self.__states.items(),
-                                     key=lambda key_value: key_value[1]):
+            for key, value in sorted(
+                self.__states.items(), key=lambda key_value: key_value[1]
+            ):
                 if value <= self.percent:
                     self.state = key
             out.cls = self.state
@@ -110,15 +107,15 @@ class CPU:
 
     async def update_temp(self):
         while True:
-
             temp_path = "/sys/class/thermal/thermal_zone0/temp"
             raw = pathlib.Path(temp_path).read_text()
             used = round(int(raw) / 1000)
             self.percent = used
             out.percentage = self.percent
             self.state = ""
-            for key, value in sorted(self.__states.items(),
-                                     key=lambda key_value: key_value[1]):
+            for key, value in sorted(
+                self.__states.items(), key=lambda key_value: key_value[1]
+            ):
                 if value <= self.percent:
                     self.state = key
             out.cls = self.state
@@ -128,14 +125,15 @@ class CPU:
     async def update_signal(self):
         while True:
             signal = float(
-                open("/home/remi/.config/waybar/modules/runcat-text/bw.log",
-                     "r").read())
+                open("/home/remi/.config/waybar/modules/runcat-text/bw.log", "r").read()
+            )
             self.percent = ceil(20 * min(1, signal / 10**8)) * 5
 
             out.percentage = self.percent
             self.state = ""
-            for key, value in sorted(self.__states.items(),
-                                     key=lambda key_value: key_value[1]):
+            for key, value in sorted(
+                self.__states.items(), key=lambda key_value: key_value[1]
+            ):
                 if value <= self.percent:
                     self.state = key
             out.cls = self.state
@@ -158,8 +156,9 @@ class CPU:
             else:
                 out.label = "Discharging"
                 self.state = ""
-                for key, value in sorted(self.__states.items(),
-                                         key=lambda key_value: key_value[1]):
+                for key, value in sorted(
+                    self.__states.items(), key=lambda key_value: key_value[1]
+                ):
                     if value <= self.percent:
                         self.state = key
             out.cls = self.state
@@ -168,7 +167,6 @@ class CPU:
 
     async def update_ram(self):
         while True:
-
             mem_path = "/proc/meminfo"
             raw = pathlib.Path(mem_path).read_text().splitlines()
             tot = int(raw[0][9:-2].strip())
@@ -177,8 +175,9 @@ class CPU:
             self.percent = used
             out.percentage = self.percent
             self.state = ""
-            for key, value in sorted(self.__states.items(),
-                                     key=lambda key_value: key_value[1]):
+            for key, value in sorted(
+                self.__states.items(), key=lambda key_value: key_value[1]
+            ):
                 if value <= self.percent:
                     self.state = key
             out.cls = self.state
@@ -187,28 +186,41 @@ class CPU:
 
     async def update_cpu(self):
         while True:
-
             raw = pathlib.Path(self.__file).read_text()
 
             lines = raw.splitlines()
             total = sum(map(int, lines[0].split()[1:4]))
 
             if self.num_cores == 0:
-                self.num_cores = (int(
-                    list(filter(
-                        lambda line: line.startswith("cpu"),
-                        lines,
-                    ))[-1].split()[0][-1]) + 1)
+                self.num_cores = (
+                    int(
+                        list(
+                            filter(
+                                lambda line: line.startswith("cpu"),
+                                lines,
+                            )
+                        )[-1].split()[0][-1]
+                    )
+                    + 1
+                )
 
             self.total_a, self.total_b = self.total_b, total
             if self.total_a != 0 and self.total_b != 0:
-                self.percent = int(((self.total_b - self.total_a) / 1.0 /
-                                    ui.SAMPLE_RATE / self.num_cores * 100))
+                self.percent = int(
+                    (
+                        (self.total_b - self.total_a)
+                        / 1.0
+                        / ui.SAMPLE_RATE
+                        / self.num_cores
+                        * 100
+                    )
+                )
             out.percentage = self.percent
 
             self.state = ""
-            for key, value in sorted(self.__states.items(),
-                                     key=lambda key_value: key_value[1]):
+            for key, value in sorted(
+                self.__states.items(), key=lambda key_value: key_value[1]
+            ):
                 if value <= self.percent:
                     self.state = key
             out.cls = self.state
@@ -217,7 +229,6 @@ class CPU:
 
 
 class UI:
-
     def __init__(self) -> None:
         self.SAMPLE_RATE = 100
         self.fps_l = 6
@@ -237,7 +248,6 @@ class UI:
             print(out)
             sys.stdout.flush()
             if cpu.percent != 0 and cpu.percent != -1:
-
                 diff = self.FPS_DELTA * cpu.percent
                 time = 1 / self.fps_l - diff
 
@@ -274,11 +284,25 @@ config = dict(json.loads(config_path.read_text()))
 user_config_path = pathlib.Path(__file__).parent.joinpath("user_conf.json")
 user_config = dict(json.loads(user_config_path.read_text()))
 if args.type == "zoo":
-    animal = random.choice(list(runners.keys())[:-2])
+    # animal = random.choice(list(runners.keys())[:-2])
+    animals = random.sample(
+        list(runners.keys())[:-2], config["how_many_animals_in_a_zoo"]
+    )
+    length = lcm(*[runners[animal][1] - runners[animal][0] for animal in animals])
+    icons = [
+        "".join(
+            [
+                chr(runners[animal][0] + i % (runners[animal][1] - runners[animal][0]))
+                for animal in animals
+            ]
+        )
+        for i in range(length)
+    ]
+    animal = ", ".join(animals)
 else:
     animal = user_config["animal"][args.type]
 
-icons = [chr(i) for i in range(runners[animal][0], runners[animal][1] )]
+    icons = [chr(i) for i in range(runners[animal][0], runners[animal][1])]
 
 if args.type == "eiffel":
     icons.extend(icons[1:-1][::-1])
@@ -295,7 +319,7 @@ cpu = CPU(
     float(_cpu.get("interval", 1)),
     pathlib.Path(_cpu.get("stat-file", "/proc/stat")),
     _cpu.get("states", {}),
-    animal=animal
+    animal=animal,
 )
 
 _ui = config.get("ui")
@@ -306,7 +330,7 @@ ui = UI()
 ui.fps_l = int(_ui.get("fps_l", 6))
 ui.fps_h = int(_ui.get("fps_h", 90))
 
-#if ui.fps_h < ui.fps_l:
+# if ui.fps_h < ui.fps_l:
 #    raise ValueError("fps_h can't be lower than fps_l")
 
 ###
