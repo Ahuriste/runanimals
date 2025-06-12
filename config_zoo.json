@@ -13,5 +13,6 @@
         },
         "stat-file": "/proc/stat"
     },
-    "tooltip-format": "{label}"
+    "tooltip-format": "{label}",
+    "how_many_animals_in_a_zoo":4
 }
